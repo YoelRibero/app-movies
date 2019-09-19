@@ -379,12 +379,22 @@
 	const $inputName = document.getElementById('input-name')
 	const $nameUser = document.getElementById('name-user')
 	const $modalUser = document.getElementById('modal-user')
+	const $loginBox = document.getElementById('login-box')
 
 	function evalueUserName() {
 		const userList = window.localStorage.getItem('userName')
 		if(userList) {
 			$nameUser.innerHTML = userList
+			$inputName.classList.add('hiden')
+			const $titleModal = $modalUser.querySelector('h1')
+			$titleModal.innerHTML = '¿Quieres cerrar tu sesión?'
+			$btnSesion.innerHTML = 'Cerrar Sesión'
+			$btnSesion.addEventListener('click', removeLocalName('userName'))
 		}
+	}
+
+	function removeLocalName(listLocal) {
+		return localStorage.removeItem(listLocal)
 	}
 
 	function userNameValue(ev) {
@@ -394,9 +404,14 @@
 		window.localStorage.setItem('userName', userName)
 		$nameUser.innerHTML = userName
 
-		$modalUser.setAttribute('style', '')
+		$overlay.classList.remove('active')
+		$modalUser.style.animation = 'modalOut .8s forwards'
 	}
 
+	$loginBox.addEventListener('click', () => {
+		$overlay.classList.add('active')
+		$modalUser.style.animation = 'modalIn .8s forwards'
+	})
 	$btnSesion.addEventListener('click', userNameValue)
 	evalueUserName()
 
