@@ -344,7 +344,7 @@
 	}
 
 	// function para abrir el modal
-	function showModal($element) {
+	function showModal($element, ev) {
 		$overlay.classList.add('active')
 		$modal.style.animation = 'modalIn .8s forwards'
 		// Accedo al data del elemento
@@ -359,11 +359,15 @@
 	}
 
 	$hideModal.addEventListener('click', hideModal)
+	$overlay.addEventListener('click', hideModal)
 
 	function hideModal() {
+		$modalOutAnimation = 'modalOut .8s forwards'
 		$overlay.classList.remove('active')
-		$modal.style.animation = 'modalOut .8s forwards'
+		$modal.style.animation = $modalOutAnimation
+		$modalUser.style.animation = $modalOutAnimation
 	}
+
 	// Claear LocalStorage
 	const $btnClear = document.getElementById('btn-clear')
 	$btnClear.addEventListener('click', clearCache)
@@ -381,37 +385,38 @@
 	const $modalUser = document.getElementById('modal-user')
 	const $loginBox = document.getElementById('login-box')
 
-	function evalueUserName() {
-		const userList = window.localStorage.getItem('userName')
-		if(userList) {
-			$nameUser.innerHTML = userList
+	function evalueIf(list) {
+		if(list) {
+			$nameUser.innerHTML = `Hola ${list}`
 			$inputName.classList.add('hiden')
 			const $titleModal = $modalUser.querySelector('h1')
 			$titleModal.innerHTML = '¿Quieres cerrar tu sesión?'
 			$btnSesion.innerHTML = 'Cerrar Sesión'
-			$btnSesion.addEventListener('click', removeLocalName('userName'))
+			$btnSesion.addEventListener('click', removeLocalName)
 		}
 	}
 
-	function removeLocalName(listLocal) {
-		return localStorage.removeItem(listLocal)
+	function evalueUserName() {
+		const userList = window.localStorage.getItem('userName')
+		evalueIf(userList)
+	}
+
+	function removeLocalName() {
+		localStorage.removeItem('userName')
 	}
 
 	function userNameValue(ev) {
-		ev.preventDefault()
-
 		const userName = $inputName.value
 		window.localStorage.setItem('userName', userName)
-		$nameUser.innerHTML = userName
-
-		$overlay.classList.remove('active')
-		$modalUser.style.animation = 'modalOut .8s forwards'
+		$nameUser.innerHTML = `Hola ${userName}`
+		hideModal()
 	}
 
 	$loginBox.addEventListener('click', () => {
 		$overlay.classList.add('active')
 		$modalUser.style.animation = 'modalIn .8s forwards'
 	})
+
 	$btnSesion.addEventListener('click', userNameValue)
 	evalueUserName()
 
